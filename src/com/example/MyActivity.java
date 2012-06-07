@@ -80,10 +80,6 @@ public class MyActivity extends Activity {
      * @param spannable
      */
     private void emotifySpannable(Spannable spannable) {
-
-        String raw = spannable.toString();
-        raw.indexOf("[icon]");
-
         int length = spannable.length();
         int position = 0;
         int tagStartPosition = 0;
