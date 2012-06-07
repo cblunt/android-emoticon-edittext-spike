@@ -76,18 +76,25 @@ public class MyActivity extends Activity {
 
     /**
      * Work through the contents of the string, and replace any occurrences of [icon] with the imageSpan
+     *
      * @param spannable
      */
     private void emotifySpannable(Spannable spannable) {
 
+        String raw = spannable.toString();
+        raw.indexOf("[icon]");
+
         int length = spannable.length();
         int position = 0;
         int tagStartPosition = 0;
+        int tagLength = 0;
         StringBuilder buffer = new StringBuilder();
         boolean inTag = false;
 
-        do {
+        if(length <= 0)
+            return;
 
+        do {
             String c = spannable.subSequence(position, position + 1).toString();
 
             if (!inTag && c.equals("[")) {
@@ -96,21 +103,25 @@ public class MyActivity extends Activity {
                 Log.d(TAG, "   Entering tag at " + tagStartPosition);
 
                 inTag = true;
+                tagLength = 0;
             }
 
             if (inTag) {
                 buffer.append(c);
+                tagLength ++;
 
                 // Have we reached end of the tag?
                 if (c.equals("]")) {
                     inTag = false;
-                    String tag = buffer.toString();
 
-                    Log.d(TAG, "Tag: " + tag + ", started at: " + tagStartPosition + ", finished at " + (tagStartPosition + position) + ", length: " + tag.length());
+                    String tag = buffer.toString();
+                    int tagEnd = tagStartPosition + tagLength;
+
+                    Log.d(TAG, "Tag: " + tag + ", started at: " + tagStartPosition + ", finished at " + tagEnd + ", length: " + tagLength);
 
                     if (tag.equals("[icon]")) {
                         ImageSpan imageSpan = new ImageSpan(iconDrawable, ImageSpan.ALIGN_BASELINE);
-                        spannable.setSpan(imageSpan, tagStartPosition, tagStartPosition + tag.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);    // Spannable#setSpan applies the xxxxSpan to characters n1...n2
+                        spannable.setSpan(imageSpan, tagStartPosition, tagEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);    // Spannable#setSpan applies the xxxxSpan to characters n1...n2
                     }
                 }
             }
