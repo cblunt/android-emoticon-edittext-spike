@@ -57,6 +57,21 @@ public class MyActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Editable buffer = editText.getText();
+			    // If the cursor is at the end of a RecipientSpan then remove the whole span
+			    int start = Selection.getSelectionStart(buffer);
+			    int end = Selection.getSelectionEnd(buffer);
+			    if (start == end) {
+			    	ImageSpan[] link = buffer.getSpans(start, end, ImageSpan.class);
+			        if (link.length > 0) {
+			            buffer.replace(
+			                    buffer.getSpanStart(link[0]),
+			                    buffer.getSpanEnd(link[0]),
+			                    ""
+			            );
+			            buffer.removeSpan(link[0]);
+			        }
+			    }
             }
 
             @Override
